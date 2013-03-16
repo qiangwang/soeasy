@@ -9,21 +9,51 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 import com.qiangwang.soeasy.account.Account;
 
 public class Settings {
 
+    public static final String TAG = "Settings";
+
     private static final String ACCOUNTS = "com.qiangwang.soeasy.accounts";
+
+    public static Context context;
 
     private static Map<String, Account> accounts;
 
-    private static String getAccountKey(Account account) {
+    public static String getAccountKey(Account account) {
         return account.getClass().getName() + "." + account.getUid();
     }
 
-    public static void saveAccount(Context context, Account account)
-            throws JSONException {
+    private static Account prefToAccount(String pref) {
+        try {
+            JSONObject jAccount = new JSONObject(pref);
+
+            String className = jAccount.optString("class");
+            Class<?> c = Class.forName(className);
+            Account account = (Account) c.getDeclaredConstructor(Context.class)
+                    .newInstance(context.getApplicationContext());
+            account.fromJSON(jAccount.optString("account"));
+            return account;
+        } catch (Exception e) {
+            Log.e(TAG, "getAccounts", e);
+            return null;
+        }
+    }
+
+    public static Account getAccount(String key) {
+        if (accounts != null)
+            return accounts.get(key);
+
+        SharedPreferences pref = context.getSharedPreferences(ACCOUNTS,
+                Context.MODE_PRIVATE);
+
+        return prefToAccount(pref.getString(key, ""));
+    }
+
+    public static void saveAccount(Account account) throws JSONException {
         JSONObject jAccount = new JSONObject();
 
         jAccount.put("class", account.getClass().getName());
@@ -42,7 +72,7 @@ public class Settings {
         }
     }
 
-    public static void delAccount(Context context, Account account) {
+    public static void delAccount(Account account) {
         String key = Settings.getAccountKey(account);
 
         SharedPreferences pref = context.getSharedPreferences(ACCOUNTS,
@@ -56,7 +86,7 @@ public class Settings {
         }
     }
 
-    public static void delAllAccounts(Context context) {
+    public static void delAllAccounts() {
         SharedPreferences pref = context.getSharedPreferences(ACCOUNTS,
                 Context.MODE_PRIVATE);
         Editor editor = pref.edit();
@@ -64,7 +94,7 @@ public class Settings {
         editor.commit();
     }
 
-    public static Map<String, Account> getAccounts(Context context) {
+    public static Map<String, Account> getAccounts() {
         if (accounts != null)
             return accounts;
 
@@ -74,19 +104,9 @@ public class Settings {
                 Context.MODE_PRIVATE);
         Map<String, ?> accountsMap = pref.getAll();
         for (String key : accountsMap.keySet()) {
-            JSONObject jAccount;
-            try {
-                jAccount = new JSONObject(pref.getString(key, ""));
-
-                String className = jAccount.optString("class");
-                Class<?> c = Class.forName(className);
-                Account account = (Account) c.getDeclaredConstructor(
-                        Context.class).newInstance(context.getApplicationContext());
-                account.fromJSON(jAccount.optString("account"));
+            Account account = prefToAccount(pref.getString(key, ""));
+            if (account != null)
                 accounts.put(key, account);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
 
         return accounts;

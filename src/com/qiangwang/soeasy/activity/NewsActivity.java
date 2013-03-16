@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import com.qiangwang.soeasy.R;
 import com.qiangwang.soeasy.Settings;
 import com.qiangwang.soeasy.account.Account;
 import com.qiangwang.soeasy.api.APIListener;
+import com.qiangwang.soeasy.api.ViewUtils;
 import com.qiangwang.soeasy.message.NewsMessage;
 
 public class NewsActivity extends Activity {
@@ -35,7 +37,7 @@ public class NewsActivity extends Activity {
         Map<String, Account> accounts = null;
 
         try {
-            accounts = Settings.getAccounts(this);
+            accounts = Settings.getAccounts();
             Log.d(TAG, accounts.toString());
         } catch (Exception e) {
             Log.e(TAG, "exception", e);
@@ -54,6 +56,10 @@ public class NewsActivity extends Activity {
                                 NewsActivity.this).inflate(
                                 R.layout.fragment_news_item, null);
 
+                        ImageView photoView = (ImageView) item
+                                .findViewById(R.id.news_item_photo);
+                        ViewUtils.setImage(photoView, news.getAuthor().getPhoto());
+                        
                         TextView usernameView = (TextView) item
                                 .findViewById(R.id.news_item_username);
                         usernameView.setText(news.getAuthor().getUsername());

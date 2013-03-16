@@ -1,7 +1,6 @@
 package com.qiangwang.soeasy.activity;
 
 import android.app.ActivityGroup;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,13 +8,12 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.qiangwang.soeasy.R;
+import com.qiangwang.soeasy.Settings;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActivityGroup {
     
     public static final String TAG = "MainActivity";
-    
-    public static Context context;
     
 	private FrameLayout container; 
 	
@@ -24,7 +22,7 @@ public class MainActivity extends ActivityGroup {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        context = getApplicationContext();
+        Settings.context = getApplicationContext();
         
         container = (FrameLayout) findViewById(R.id.main_content);
        

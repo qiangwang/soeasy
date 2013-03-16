@@ -1,40 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/tabs"
     android:orientation="vertical" >
-          
-        <FrameLayout   
-            android:id="@+id/main_content"
-            android:layout_width="fill_parent"   
-            android:layout_height="0dip"
-            android:layout_weight="1" />
-  
-       <RadioGroup   
-        android:gravity="center_vertical"  
-        android:layout_gravity="bottom"   
-        android:orientation="horizontal"     
-        android:layout_width="fill_parent"   
-        android:layout_height="wrap_content">
-          
-            <RadioButton   
-                android:id="@+id/main_news_button"   
-                android:checked="true"
-                android:text="@string/title_news"
-                android:drawableTop="@drawable/ic_launcher"
-                android:textColor="@color/tab_text"
-                style="@style/MMTabButton"
-                android:onClick="changeContent" />      
- 
-            <RadioButton   
-                android:id="@+id/main_accounts_button"
-                android:text="@string/title_accounts"
-                android:drawableTop="@drawable/ic_launcher"
-                android:textColor="@color/tab_text"   
-                style="@style/MMTabButton"
-                android:onClick="changeContent"  />  
- 
-        </RadioGroup>  
-              
-    </LinearLayout>  
+    
+    <FrameLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/main_news_button"
+            style="@style/tabs_button"
+            android:checked="true"
+            android:drawableTop="@drawable/news"
+            android:onClick="changeContent"
+            android:text="@string/title_news" />
+
+        <RadioButton
+            android:id="@+id/main_accounts_button"
+            style="@style/tabs_button"
+            android:drawableTop="@drawable/me"
+            android:onClick="changeContent"
+            android:text="@string/title_accounts" />
+    </RadioGroup>
+
+</LinearLayout>

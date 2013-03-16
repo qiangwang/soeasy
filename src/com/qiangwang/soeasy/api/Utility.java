@@ -24,7 +24,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.qiangwang.soeasy.activity.MainActivity;
+import com.qiangwang.soeasy.Settings;
 
 public class Utility {
     private static char[] encodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
@@ -431,7 +431,7 @@ public class Utility {
 
         public static boolean revitionPostImageSize(String picfile) {
             try {
-                if (isWifi(MainActivity.context)) {
+                if (isWifi(Settings.context)) {
                     revitionImageSizeHD(picfile, 1600, 75);
                 } else {
                     revitionImageSize(picfile, 1024, 75);

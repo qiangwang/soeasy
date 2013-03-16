@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -17,20 +17,47 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
-<style name="tab_item_text_style">  
-    <item name="android:textSize">12.0dip</item>  
-    <item name="android:textColor">@color/tab_text</item>  
-    <item name="android:ellipsize">marquee</item>         
-    <item name="android:singleLine">true</item>  
-</style>  
-      
-<style name="MMTabButton">  
-    <item name="android:gravity">center_horizontal</item>  
-    <item name="android:layout_width">0.0dip</item>  
-    <item name="android:layout_height">wrap_content</item>  
-    <item name="android:layout_weight">1.0</item>  
-    <item name="android:button">@null</item>  
-    <item name="android:background">#000</item> 
-    <item name="android:textAppearance">@style/tab_item_text_style</item>    
-</style>  
+    <style name="tabs">
+        <item name="android:padding">0dip</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">#FFF</item>
+    </style>
+    
+    <style name="tabs_button">
+        <item name="android:padding">2dip</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_width">0.0dip</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1.0</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">#000</item>
+        <item name="android:textSize">12.0dip</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+    <style name="settings">
+        <item name="android:padding">10dip</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">#EEE</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="settings_button">
+        <item name="android:layout_marginBottom">5dip</item>
+        <item name="android:paddingTop">8dip</item>
+        <item name="android:paddingBottom">8dip</item>
+        <item name="android:paddingLeft">13dip</item>
+        <item name="android:paddingRight">6dip</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/settings_button</item>
+        <item name="android:textSize">15.0dip</item>
+        <item name="android:textColor">#000</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:clickable">true</item>
+        <item name="android:drawableRight">@drawable/settings_arrow</item>
+    </style>
+
 </resources>

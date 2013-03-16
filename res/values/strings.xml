@@ -8,10 +8,14 @@
     
     <string name="title_accounts">账号</string>
     <string name="title_accounts_add">添加账号</string>
+    <string name="title_accounts_detail">设置账号</string>
     <string name="title_accounts_auth">认证账号</string>
-    <string name="title_accounts_del">X</string>
+    <string name="title_accounts_del">删除账号</string>
     <string name="title_accounts_del_all">全部删除</string>
     <string name="title_accounts_add_weibo">微博</string>
     <string name="title_accounts_add_renren">人人</string>
+    
+    <string name="desc_accounts_photo">头像</string>
+    <string name="desc_settings_arrow">头像</string>
 
 </resources>

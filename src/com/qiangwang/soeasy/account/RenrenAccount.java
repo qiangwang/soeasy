@@ -79,6 +79,7 @@ public class RenrenAccount extends Account {
                         Account author = new RenrenAccount(context);
                         author.setUid(jFeed.getString("actor_id"));
                         author.setUsername(jFeed.getString("name"));
+                        author.setPhoto(jFeed.getString("headurl"));
 
                         JSONObject jComments = jFeed.getJSONObject("comments");
 
@@ -111,26 +112,27 @@ public class RenrenAccount extends Account {
 
     @Override
     public String toJSON() {
-        JSONObject jAccount = new JSONObject();
+        String json = "";
 
         try {
-            jAccount.put("uid", uid);
-            jAccount.put("username", username);
+            JSONObject jAccount = new JSONObject(super.toJSON());
+
             jAccount.put("accessToken", accessToken);
             jAccount.put("expiresIn", expiresIn);
+
+            json = jAccount.toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return jAccount.toString();
+        return json;
     }
 
     @Override
     public void fromJSON(String json) {
+        super.fromJSON(json);
         try {
             JSONObject jAccount = new JSONObject(json);
-            uid = jAccount.optString("uid");
-            username = jAccount.optString("username");
             accessToken = jAccount.optString("accessToken");
             expiresIn = jAccount.optString("expiresIn");
         } catch (JSONException e) {
@@ -166,8 +168,9 @@ public class RenrenAccount extends Account {
 
                         RenrenAccount.this.uid = info.getString("uid");
                         RenrenAccount.this.username = info.getString("name");
+                        RenrenAccount.this.photo = info.getString("headurl");
 
-                        Settings.saveAccount(context, RenrenAccount.this);
+                        Settings.saveAccount(RenrenAccount.this);
 
                         Toast.makeText(context, "绑定成功", Toast.LENGTH_SHORT)
                                 .show();

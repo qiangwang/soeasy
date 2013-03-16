@@ -7,16 +7,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.qiangwang.soeasy.R;
 import com.qiangwang.soeasy.Settings;
 import com.qiangwang.soeasy.account.Account;
+import com.qiangwang.soeasy.api.ViewUtils;
 
 public class AccountsActivity extends Activity {
+
+    public static final String TAG = "AccountsActivity";
 
     private LinearLayout accountsContent;
 
@@ -33,10 +35,10 @@ public class AccountsActivity extends Activity {
         super.onResume();
 
         accountsContent.removeAllViews();
-        
+
         Map<String, Account> accounts = null;
 
-        accounts = Settings.getAccounts(getApplicationContext());
+        accounts = Settings.getAccounts();
 
         for (String key : accounts.keySet()) {
             Account account = accounts.get(key);
@@ -44,13 +46,15 @@ public class AccountsActivity extends Activity {
             LinearLayout item = (LinearLayout) LayoutInflater.from(this)
                     .inflate(R.layout.fragment_account_item, null);
 
+            ImageView photoView = (ImageView) item
+                    .findViewById(R.id.account_item_photo);
+            ViewUtils.setImage(photoView, account.getPhoto());
+
             TextView usernameView = (TextView) item
                     .findViewById(R.id.account_item_username);
             usernameView.setText(account.getUsername());
 
-            Button delButton = (Button) item
-                    .findViewById(R.id.account_item_del);
-            delButton.setTag(account);
+            item.setTag(account);
 
             accountsContent.addView(item);
         }
@@ -59,19 +63,21 @@ public class AccountsActivity extends Activity {
 
     public void showAdd(View view) {
         Intent intent = new Intent(this, AccountsAddActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 500);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-    public void showDelete(View view) {
-        Account account = (Account) ((Button) view).getTag();
-        Settings.delAccount(this, account);
-        accountsContent.removeView((View) view.getParent());
-        Toast.makeText(this, "已删除", Toast.LENGTH_SHORT).show();
+    public void showDetail(View view) {
+        Intent intent = new Intent(this, AccountsDetailActivity.class);
+        Account account = (Account) view.getTag();
+        intent.putExtra("accountKey", Settings.getAccountKey(account));
+        startActivityForResult(intent, 600);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
-
-    public void showDeleteAll(View view) {
-        Settings.delAllAccounts(this);
-        accountsContent.removeAllViews();
-        Toast.makeText(this, "已全部删除", Toast.LENGTH_SHORT).show();
+  
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

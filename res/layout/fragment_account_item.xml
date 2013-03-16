@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal" >
-    
+    style="@style/settings_button"
+    android:onClick="showDetail"
+    android:orientation="horizontal"
+    android:descendantFocusability="blocksDescendants" >
+
+    <ImageView
+        android:id="@+id/account_item_photo"
+        android:layout_width="50dip"
+        android:layout_height="50dip"
+        android:layout_marginRight="5dip"
+        android:contentDescription="@string/desc_accounts_photo"
+        android:scaleType="fitCenter" />
+
     <TextView
         android:id="@+id/account_item_username"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textIsSelectable="true" />
-    
-    <Button
-        android:id="@+id/account_item_del"
+
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title_accounts_del"
-        android:onClick="showDelete" />          
-</LinearLayout>  
+        android:contentDescription="@string/desc_settings_arrow"
+        android:src="@drawable/settings_arrow" />
+
+</LinearLayout>

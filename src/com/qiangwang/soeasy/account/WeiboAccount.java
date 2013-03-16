@@ -84,6 +84,8 @@ public class WeiboAccount extends Account {
                                 author.setUid(user.getString("id"));
                                 author.setUsername(user
                                         .getString("screen_name"));
+                                author.setPhoto(user
+                                        .getString("profile_image_url"));
 
                                 NewsMessage newsMessage = new NewsMessage(
                                         WeiboAccount.this, id, author, status
@@ -114,26 +116,27 @@ public class WeiboAccount extends Account {
 
     @Override
     public String toJSON() {
-        JSONObject jAccount = new JSONObject();
+        String json = "";
 
         try {
-            jAccount.put("uid", uid);
-            jAccount.put("username", username);
+            JSONObject jAccount = new JSONObject(super.toJSON());
+
             jAccount.put("accessToken", accessToken);
             jAccount.put("expiresIn", expiresIn);
+
+            json = jAccount.toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return jAccount.toString();
+        return json;
     }
 
     @Override
     public void fromJSON(String json) {
+        super.fromJSON(json);
         try {
             JSONObject jAccount = new JSONObject(json);
-            uid = jAccount.optString("uid");
-            username = jAccount.optString("username");
             accessToken = jAccount.optString("accessToken");
             expiresIn = jAccount.optString("expiresIn");
         } catch (JSONException e) {
@@ -168,8 +171,10 @@ public class WeiboAccount extends Account {
 
                         WeiboAccount.this.username = info
                                 .getString("screen_name");
+                        WeiboAccount.this.photo = info
+                                .getString("profile_image_url");
 
-                        Settings.saveAccount(context, WeiboAccount.this);
+                        Settings.saveAccount(WeiboAccount.this);
 
                         Toast.makeText(context, "绑定成功", Toast.LENGTH_SHORT)
                                 .show();
