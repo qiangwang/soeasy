@@ -17,7 +17,11 @@ import com.qiangwang.soeasy.Settings;
 import com.qiangwang.soeasy.account.Account;
 import com.qiangwang.soeasy.api.APIListener;
 import com.qiangwang.soeasy.api.ViewUtils;
+import com.qiangwang.soeasy.message.Attachment;
+import com.qiangwang.soeasy.message.BlogAttachment;
+import com.qiangwang.soeasy.message.ImageAttachment;
 import com.qiangwang.soeasy.message.NewsMessage;
+import com.qiangwang.soeasy.message.RetweetAttachment;
 
 public class NewsActivity extends TabActivity {
 	public static final String TAG = "NewsActivity";
@@ -76,28 +80,49 @@ public class NewsActivity extends TabActivity {
 				.findViewById(R.id.news_item_content);
 		contentView.setText(news.getContent());
 
-		if (news.getSmallPicUrl() != null) {
+		View attachmentView = getAttachmentView(news.getAttachment());
+		if (attachmentView != null) {
 			LinearLayout attachmentLayout = (LinearLayout) item
 					.findViewById(R.id.news_item_attachment);
-
-			ImageView imageAttachview = (ImageView) LayoutInflater.from(
-					NewsActivity.this).inflate(
-					R.layout.fragment_attachment_image, null);
-			ViewUtils.setImage(imageAttachview, news.getSmallPicUrl());
-
-			attachmentLayout.addView(imageAttachview);
-		}
-
-		if (news.getRetweeted() != null) {
-			LinearLayout attachmentLayout = (LinearLayout) item
-					.findViewById(R.id.news_item_attachment);
-
-			View retweetedView = getNewsItemView(news.getRetweeted());
-
-			attachmentLayout.addView(retweetedView);
+			attachmentLayout.addView(attachmentView);
 		}
 
 		return item;
+	}
+
+	private View getAttachmentView(Attachment attachment) {
+		if (attachment instanceof ImageAttachment) {
+			ImageAttachment imageAttachment = (ImageAttachment) attachment;
+			ImageView imageAttachview = (ImageView) LayoutInflater.from(
+					NewsActivity.this).inflate(
+					R.layout.fragment_attachment_image, null);
+			ViewUtils.setImage(imageAttachview,
+					imageAttachment.getSmallPicUrl());
+			return imageAttachview;
+		} else if (attachment instanceof RetweetAttachment) {
+			RetweetAttachment retweetAttachment = (RetweetAttachment) attachment;
+			View retweetedView = getNewsItemView(retweetAttachment
+					.getRetweeted());
+			return retweetedView;
+		} else if (attachment instanceof BlogAttachment) {
+			BlogAttachment blogAttachment = (BlogAttachment) attachment;
+
+			LinearLayout blogView = (LinearLayout) LayoutInflater.from(
+					NewsActivity.this).inflate(
+					R.layout.fragment_attachment_blog, null);
+
+			TextView titleView = (TextView) blogView
+					.findViewById(R.id.blog_title);
+			titleView.setText(blogAttachment.getTitle());
+
+			TextView summaryView = (TextView) blogView
+					.findViewById(R.id.blog_summary);
+			summaryView.setText(blogAttachment.getSummary());
+
+			return blogView;
+		} else {
+			return null;
+		}
 	}
 
 	protected void onStart() {

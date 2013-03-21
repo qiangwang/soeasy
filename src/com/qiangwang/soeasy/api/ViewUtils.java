@@ -3,6 +3,7 @@ package com.qiangwang.soeasy.api;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -20,7 +21,9 @@ public class ViewUtils {
         return mWebView;
     }
 
-    public static void setImage(final ImageView view, String url) {
+    public static void setImage(final ImageView view, final String url) {
+    	if(TextUtils.isEmpty(url)) return;
+    	
         new ImageTask().execute(url, new APIListener<Bitmap, Exception>() {
 
             @Override
@@ -30,7 +33,7 @@ public class ViewUtils {
 
             @Override
             public void onError(Exception e) {
-                Log.d(TAG, "setImage", e);
+                Log.e(TAG, "setImage:" + url, e);
             }
 
         });

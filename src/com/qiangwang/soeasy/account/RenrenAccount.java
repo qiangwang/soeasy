@@ -17,6 +17,9 @@ import com.qiangwang.soeasy.Settings;
 import com.qiangwang.soeasy.api.APIListener;
 import com.qiangwang.soeasy.api.renren.RenrenAPI;
 import com.qiangwang.soeasy.api.renren.RenrenAuth;
+import com.qiangwang.soeasy.message.Attachment;
+import com.qiangwang.soeasy.message.BlogAttachment;
+import com.qiangwang.soeasy.message.ImageAttachment;
 import com.qiangwang.soeasy.message.NewsMessage;
 
 public class RenrenAccount extends Account {
@@ -31,7 +34,6 @@ public class RenrenAccount extends Account {
 
 	private String accessToken;
 	private String expiresIn;
-	private String refreshToken;
 
 	private long lastNewsId;
 
@@ -93,11 +95,32 @@ public class RenrenAccount extends Account {
 
 						JSONObject jComments = jFeed.getJSONObject("comments");
 
+						// get content according to feedType
+						String content = jFeed.getString("title");
+						Attachment attachment = null;
+
+						int feedType = jFeed.getInt("feed_type");
+
+						if (feedType >= 10 && feedType < 20) {
+							content = jFeed.getString("message");
+						} else if (feedType >= 20 && feedType < 30) {
+							content = jFeed.getString("prefix");
+							attachment = new BlogAttachment(jFeed
+									.getString("title"), jFeed
+									.getString("description"), jFeed
+									.getString("href"));
+						} else if (feedType >= 30 && feedType < 40) {
+							content = jFeed.getString("title");
+							JSONObject jAttachment = jFeed.getJSONArray(
+									"attachment").getJSONObject(0);
+							attachment = new ImageAttachment(jAttachment
+									.getString("src"));
+						}
+
 						NewsMessage newsMessage = new NewsMessage(
-								RenrenAccount.this, id, author, jFeed
-										.getString("title"), jFeed
+								RenrenAccount.this, id, author, content, jFeed
 										.getString("update_time"), jComments
-										.getInt("count"), null, null);
+										.getInt("count"), attachment);
 
 						newsMessages.add(newsMessage);
 					}
@@ -163,7 +186,6 @@ public class RenrenAccount extends Account {
 
 			RenrenAccount.this.accessToken = values.getString("access_token");
 			RenrenAccount.this.expiresIn = values.getString("expires_in");
-			RenrenAccount.this.refreshToken = values.getString("refresh_token");
 
 			getRenrenAPI().getUsersInfo(new APIListener<String, Exception>() {
 

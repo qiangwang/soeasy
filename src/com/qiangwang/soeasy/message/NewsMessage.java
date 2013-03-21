@@ -12,20 +12,17 @@ public class NewsMessage extends Message {
 	private String createdTime;
 	private int commentsCount;
 
-	private String smallPicUrl;
-	
-	private NewsMessage retweeted;
+	private Attachment attachment;
 
 	public NewsMessage(Account owner, long id, Account author, String content,
-			String createdTime, int commentsCount, String smallPicUrl, NewsMessage retweeted) {
+			String createdTime, int commentsCount, Attachment attachment) {
 		this.owner = owner;
 		this.id = id;
 		this.author = author;
 		this.content = content;
 		this.createdTime = createdTime;
 		this.commentsCount = commentsCount;
-		this.smallPicUrl = smallPicUrl;
-		this.retweeted = retweeted;
+		this.setAttachment(attachment);
 	}
 
 	public Account getOwner() {
@@ -76,20 +73,12 @@ public class NewsMessage extends Message {
 		this.commentsCount = commentsCount;
 	}
 
-	public String getSmallPicUrl() {
-		return smallPicUrl;
+	public Attachment getAttachment() {
+		return attachment;
 	}
 
-	public void setSmallPicUrl(String smallPicUrl) {
-		this.smallPicUrl = smallPicUrl;
-	}
-
-	public NewsMessage getRetweeted() {
-		return retweeted;
-	}
-
-	public void setRetweeted(NewsMessage retweeted) {
-		this.retweeted = retweeted;
+	public void setAttachment(Attachment attachment) {
+		this.attachment = attachment;
 	}
 
 }

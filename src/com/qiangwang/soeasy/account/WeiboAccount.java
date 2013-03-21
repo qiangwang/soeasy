@@ -18,7 +18,10 @@ import com.qiangwang.soeasy.api.APIListener;
 import com.qiangwang.soeasy.api.weibo.WeiboAPI;
 import com.qiangwang.soeasy.api.weibo.WeiboAPI.FEATURE;
 import com.qiangwang.soeasy.api.weibo.WeiboAuth;
+import com.qiangwang.soeasy.message.Attachment;
+import com.qiangwang.soeasy.message.ImageAttachment;
 import com.qiangwang.soeasy.message.NewsMessage;
+import com.qiangwang.soeasy.message.RetweetAttachment;
 
 public class WeiboAccount extends Account {
 
@@ -112,16 +115,23 @@ public class WeiboAccount extends Account {
 						author.setUsername(jUser.getString("screen_name"));
 						author.setPhotoUrl(jUser.getString("profile_image_url"));
 
+						Attachment attachment = null;
+
 						String smallPicUrl = jStatus.optString("thumbnail_pic");
+						if (smallPicUrl != null) {
+							attachment = new ImageAttachment(smallPicUrl);
+						}
 
 						NewsMessage retweeted = jsonToNews(jStatus
 								.optJSONObject("retweeted_status"));
+						if (retweeted != null) {
+							attachment = new RetweetAttachment(retweeted);
+						}
 
 						return new NewsMessage(WeiboAccount.this, id, author,
 								jStatus.getString("text"), jStatus
 										.getString("created_at"), jStatus
-										.getInt("comments_count"), smallPicUrl,
-								retweeted);
+										.getInt("comments_count"), attachment);
 					}
 				});
 	}
