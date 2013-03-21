@@ -8,10 +8,8 @@ import com.qiangwang.soeasy.R;
 
 public abstract class SlideActivity extends Activity {
     
-    @Override
-    public void startActivityForResult(Intent intent, int requestCode){
-        //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        super.startActivityForResult(intent, 500);
+    public void slideActivity(Intent intent){
+        startActivityForResult(intent, 0);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
     

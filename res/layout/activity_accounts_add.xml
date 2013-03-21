@@ -4,13 +4,13 @@
     style="@style/settings" >
 
     <Button
-        style="@style/settings_button"
+        style="@style/settings_item"
         android:onClick="addAccount"
         android:tag="com.qiangwang.soeasy.account.WeiboAccount"
         android:text="@string/title_accounts_add_weibo" />
 
     <Button
-        style="@style/settings_button"
+        style="@style/settings_item"
         android:onClick="addAccount"
         android:tag="com.qiangwang.soeasy.account.RenrenAccount"
         android:text="@string/title_accounts_add_renren" />

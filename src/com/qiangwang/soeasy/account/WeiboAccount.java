@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.qiangwang.soeasy.App;
 import com.qiangwang.soeasy.Settings;
 import com.qiangwang.soeasy.api.APIListener;
 import com.qiangwang.soeasy.api.weibo.WeiboAPI;
@@ -21,188 +22,201 @@ import com.qiangwang.soeasy.message.NewsMessage;
 
 public class WeiboAccount extends Account {
 
-    public static final String TAG = "WeiboAccount";
+	public static final String TAG = "WeiboAccount";
 
-    private static final String CLIENT_ID = "1796068784";
-    private static final String REDIRECT_URI = "http://www.sina.com";
+	private static final String CLIENT_ID = "1796068784";
+	private static final String REDIRECT_URI = "http://www.sina.com";
 
-    private WeiboAuth weiboAuth;
-    private WeiboAPI weiboAPI;
+	private WeiboAuth weiboAuth;
+	private WeiboAPI weiboAPI;
 
-    private String accessToken;
-    private String expiresIn;
+	private String accessToken;
+	private String expiresIn;
 
-    private long lastNewsId;
+	private long lastNewsId;
 
-    public WeiboAccount(Context context) {
-        super(context);
-    }
+	public WeiboAccount() {
+		super();
+	}
 
-    private WeiboAuth getWeiboAuth() {
-        if (weiboAuth == null) {
-            weiboAuth = new WeiboAuth(CLIENT_ID, REDIRECT_URI);
-        }
-        return weiboAuth;
-    }
+	private WeiboAuth getWeiboAuth() {
+		if (weiboAuth == null) {
+			weiboAuth = new WeiboAuth(CLIENT_ID, REDIRECT_URI);
+		}
+		return weiboAuth;
+	}
 
-    private WeiboAPI getWeiboAPI() {
-        if (weiboAPI == null && accessToken != null) {
-            weiboAPI = new WeiboAPI(accessToken);
-        }
-        return weiboAPI;
-    }
+	private WeiboAPI getWeiboAPI() {
+		if (weiboAPI == null && accessToken != null) {
+			weiboAPI = new WeiboAPI(accessToken);
+		}
+		return weiboAPI;
+	}
 
-    @Override
-    public View getAuthView(APIListener<Void, Void> listener) {
-        return getWeiboAuth().getAuthView(context,
-                new WeiboAuthListener(listener));
-    }
+	@Override
+	public View getAuthView(Context context, APIListener<Void, Void> listener) {
+		return getWeiboAuth().getAuthView(context,
+				new WeiboAuthListener(listener));
+	}
 
-    @Override
-    public void getLatestNews(
-            final APIListener<ArrayList<NewsMessage>, Exception> listener) {
-        getWeiboAPI().homeTimeline(lastNewsId, 0, 10, 1, false, FEATURE.ALL,
-                false, new APIListener<String, Exception>() {
+	@Override
+	public void getLatestNews(
+			final APIListener<ArrayList<NewsMessage>, Exception> listener) {
+		getWeiboAPI().homeTimeline(lastNewsId, 0, 10, 1, false, FEATURE.ALL,
+				false, new APIListener<String, Exception>() {
 
-                    @Override
-                    public void onSuccess(String result) {
+					@Override
+					public void onSuccess(String result) {
 
-                        ArrayList<NewsMessage> newsMessages = new ArrayList<NewsMessage>();
+						ArrayList<NewsMessage> newsMessages = new ArrayList<NewsMessage>();
 
-                        try {
-                            JSONObject jNews = new JSONObject(result);
-                            JSONArray jStatuses = jNews
-                                    .getJSONArray("statuses");
+						try {
+							JSONObject jNews = new JSONObject(result);
+							JSONArray jStatuses = jNews
+									.getJSONArray("statuses");
 
-                            for (int i = 0; i < jStatuses.length(); i++) {
-                                JSONObject status = jStatuses.getJSONObject(i);
+							for (int i = 0; i < jStatuses.length(); i++) {
+								JSONObject jStatus = jStatuses.getJSONObject(i);
 
-                                long id = status.getLong("id");
+								NewsMessage newsMessage = jsonToNews(jStatus);
 
-                                JSONObject user = status.getJSONObject("user");
-                                Account author = new WeiboAccount(context);
-                                author.setUid(user.getString("id"));
-                                author.setUsername(user
-                                        .getString("screen_name"));
-                                author.setPhoto(user
-                                        .getString("profile_image_url"));
+								newsMessages.add(newsMessage);
 
-                                NewsMessage newsMessage = new NewsMessage(
-                                        WeiboAccount.this, id, author, status
-                                                .getString("text"), status
-                                                .getString("created_at"),
-                                        status.getInt("comments_count"));
+								if (newsMessage.getId() > lastNewsId) {
+									lastNewsId = newsMessage.getId();
+								}
+							}
 
-                                newsMessages.add(newsMessage);
+							listener.onSuccess(newsMessages);
+						} catch (JSONException e) {
+							listener.onError(e);
+						}
+					}
 
-                                if (id > lastNewsId) {
-                                    lastNewsId = id;
-                                }
-                            }
+					@Override
+					public void onError(Exception e) {
+						Toast.makeText(App.getAppContext(), e.getMessage(),
+								Toast.LENGTH_LONG).show();
+					}
 
-                            listener.onSuccess(newsMessages);
-                        } catch (JSONException e) {
-                            listener.onError(e);
-                        }
-                    }
+					private NewsMessage jsonToNews(JSONObject jStatus)
+							throws JSONException {
+						if (jStatus == null)
+							return null;
 
-                    @Override
-                    public void onError(Exception e) {
-                        Toast.makeText(context, e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
+						long id = jStatus.getLong("id");
 
-    @Override
-    public String toJSON() {
-        String json = "";
+						JSONObject jUser = jStatus.getJSONObject("user");
+						Account author = new WeiboAccount();
+						author.setUid(jUser.getString("id"));
+						author.setUsername(jUser.getString("screen_name"));
+						author.setPhotoUrl(jUser.getString("profile_image_url"));
 
-        try {
-            JSONObject jAccount = new JSONObject(super.toJSON());
+						String smallPicUrl = jStatus.optString("thumbnail_pic");
 
-            jAccount.put("accessToken", accessToken);
-            jAccount.put("expiresIn", expiresIn);
+						NewsMessage retweeted = jsonToNews(jStatus
+								.optJSONObject("retweeted_status"));
 
-            json = jAccount.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+						return new NewsMessage(WeiboAccount.this, id, author,
+								jStatus.getString("text"), jStatus
+										.getString("created_at"), jStatus
+										.getInt("comments_count"), smallPicUrl,
+								retweeted);
+					}
+				});
+	}
 
-        return json;
-    }
+	@Override
+	public String toJSON() {
+		String json = "";
 
-    @Override
-    public void fromJSON(String json) {
-        super.fromJSON(json);
-        try {
-            JSONObject jAccount = new JSONObject(json);
-            accessToken = jAccount.optString("accessToken");
-            expiresIn = jAccount.optString("expiresIn");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+		try {
+			JSONObject jAccount = new JSONObject(super.toJSON());
 
-    private class WeiboAuthListener implements APIListener<Bundle, Exception> {
+			jAccount.put("accessToken", accessToken);
+			jAccount.put("expiresIn", expiresIn);
 
-        private APIListener<Void, Void> listener;
+			json = jAccount.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
-        public WeiboAuthListener(APIListener<Void, Void> listener) {
-            this.listener = listener;
-        }
+		return json;
+	}
 
-        @Override
-        public void onSuccess(final Bundle values) {
-            Toast.makeText(context, "认证成功", Toast.LENGTH_SHORT).show();
+	@Override
+	public void fromJSON(String json) {
+		super.fromJSON(json);
+		try {
+			JSONObject jAccount = new JSONObject(json);
+			accessToken = jAccount.optString("accessToken");
+			expiresIn = jAccount.optString("expiresIn");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 
-            Log.d(TAG, values.toString());
+	private class WeiboAuthListener implements APIListener<Bundle, Exception> {
 
-            WeiboAccount.this.uid = values.getString("uid");
-            WeiboAccount.this.accessToken = values.getString("access_token");
-            WeiboAccount.this.expiresIn = values.getString("expires_in");
+		private APIListener<Void, Void> listener;
 
-            getWeiboAPI().show(uid, new APIListener<String, Exception>() {
+		public WeiboAuthListener(APIListener<Void, Void> listener) {
+			this.listener = listener;
+		}
 
-                @Override
-                public void onSuccess(String result) {
-                    try {
-                        JSONObject info = new JSONObject(result);
+		@Override
+		public void onSuccess(final Bundle values) {
+			Toast.makeText(App.getAppContext(), "认证成功", Toast.LENGTH_SHORT)
+					.show();
 
-                        WeiboAccount.this.username = info
-                                .getString("screen_name");
-                        WeiboAccount.this.photo = info
-                                .getString("profile_image_url");
+			Log.d(TAG, values.toString());
 
-                        Settings.saveAccount(WeiboAccount.this);
+			WeiboAccount.this.uid = values.getString("uid");
+			WeiboAccount.this.accessToken = values.getString("access_token");
+			WeiboAccount.this.expiresIn = values.getString("expires_in");
 
-                        Toast.makeText(context, "绑定成功", Toast.LENGTH_SHORT)
-                                .show();
+			getWeiboAPI().show(uid, new APIListener<String, Exception>() {
 
-                        listener.onSuccess(null);
-                    } catch (JSONException e) {
-                        Toast.makeText(context, e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "exception", e);
-                        listener.onError(null);
-                    }
-                }
+				@Override
+				public void onSuccess(String result) {
+					try {
+						JSONObject info = new JSONObject(result);
 
-                @Override
-                public void onError(Exception e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG)
-                            .show();
-                    listener.onError(null);
-                }
-            });
-        }
+						WeiboAccount.this.username = info
+								.getString("screen_name");
+						WeiboAccount.this.photoUrl = info
+								.getString("profile_image_url");
 
-        @Override
-        public void onError(Exception e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-            listener.onError(null);
-        }
+						Settings.saveAccount(WeiboAccount.this);
 
-    }
+						Toast.makeText(App.getAppContext(), "绑定成功",
+								Toast.LENGTH_SHORT).show();
+
+						listener.onSuccess(null);
+					} catch (JSONException e) {
+						Toast.makeText(App.getAppContext(), e.getMessage(),
+								Toast.LENGTH_LONG).show();
+						Log.e(TAG, "exception", e);
+						listener.onError(null);
+					}
+				}
+
+				@Override
+				public void onError(Exception e) {
+					Toast.makeText(App.getAppContext(), e.getMessage(),
+							Toast.LENGTH_LONG).show();
+					listener.onError(null);
+				}
+			});
+		}
+
+		@Override
+		public void onError(Exception e) {
+			Toast.makeText(App.getAppContext(), e.getMessage(),
+					Toast.LENGTH_LONG).show();
+			listener.onError(null);
+		}
+
+	}
 
 }

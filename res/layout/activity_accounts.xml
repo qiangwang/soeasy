@@ -5,7 +5,7 @@
     style="@style/settings" >
 
     <Button
-        style="@style/settings_button"
+        style="@style/settings_item"
         android:onClick="showAdd"
         android:text="@string/title_accounts_add" />
 

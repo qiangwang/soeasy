@@ -16,6 +16,7 @@
     <string name="title_accounts_add_renren">人人</string>
     
     <string name="desc_accounts_photo">头像</string>
-    <string name="desc_settings_arrow">头像</string>
+    <string name="desc_settings_arrow">></string>
+    <string name="desc_attachment">图片</string>
 
 </resources>

@@ -10,7 +10,9 @@ import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
+import com.qiangwang.soeasy.App;
 import com.qiangwang.soeasy.api.APIException;
 import com.qiangwang.soeasy.api.APIListener;
 import com.qiangwang.soeasy.api.APIParameters;
@@ -72,6 +74,7 @@ public class WeiboAuth extends Auth {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        	Toast.makeText(App.getAppContext(), "正在加载", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onPageStarted URL: " + url);
             super.onPageStarted(view, url, favicon);
         }

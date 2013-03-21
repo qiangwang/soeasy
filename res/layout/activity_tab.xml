@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/tabs"
     android:orientation="vertical" >
-    
+
     <FrameLayout
-        android:id="@+id/main_content"
+        android:id="@+id/tabs_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
@@ -18,19 +18,19 @@
         android:orientation="horizontal" >
 
         <RadioButton
-            android:id="@+id/main_news_button"
             style="@style/tabs_button"
             android:checked="true"
             android:drawableTop="@drawable/news"
             android:onClick="changeContent"
-            android:text="@string/title_news" />
+            android:text="@string/title_news"
+            android:tag="com.qiangwang.soeasy.activity.NewsActivity" />
 
         <RadioButton
-            android:id="@+id/main_accounts_button"
             style="@style/tabs_button"
             android:drawableTop="@drawable/me"
             android:onClick="changeContent"
-            android:text="@string/title_accounts" />
+            android:text="@string/title_accounts"
+            android:tag="com.qiangwang.soeasy.activity.AccountsActivity" />
     </RadioGroup>
 
 </LinearLayout>

@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -30,7 +34,18 @@ public class APITask extends AsyncTask<Object, Void, Map<String, Object>> {
             resultMap.put("result", result);
 
             Log.d(TAG, String.valueOf(result.getHttpCode()));
-            Log.d(TAG, result.getResult());
+            
+            String json = "";
+			try {
+				json = new JSONObject(result.getResult()).toString(2);
+			} catch (JSONException e) {
+				try {
+					json = new JSONArray(result.getResult()).toString(2);
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
+			}
+            Log.d(TAG, json);
         } catch (IOException e) {
             resultMap.put("result", e);
             Log.d(TAG, "api exception", e);

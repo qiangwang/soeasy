@@ -2,7 +2,6 @@ package com.qiangwang.soeasy.activity;
 
 import java.util.Map;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,7 +15,7 @@ import com.qiangwang.soeasy.Settings;
 import com.qiangwang.soeasy.account.Account;
 import com.qiangwang.soeasy.api.ViewUtils;
 
-public class AccountsActivity extends Activity {
+public class AccountsActivity extends TabActivity {
 
     public static final String TAG = "AccountsActivity";
 
@@ -25,7 +24,6 @@ public class AccountsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_accounts);
 
         accountsContent = (LinearLayout) findViewById(R.id.accounts_content);
     }
@@ -36,9 +34,7 @@ public class AccountsActivity extends Activity {
 
         accountsContent.removeAllViews();
 
-        Map<String, Account> accounts = null;
-
-        accounts = Settings.getAccounts();
+        Map<String, Account> accounts = Settings.getAccounts();
 
         for (String key : accounts.keySet()) {
             Account account = accounts.get(key);
@@ -48,7 +44,7 @@ public class AccountsActivity extends Activity {
 
             ImageView photoView = (ImageView) item
                     .findViewById(R.id.account_item_photo);
-            ViewUtils.setImage(photoView, account.getPhoto());
+            ViewUtils.setImage(photoView, account.getPhotoUrl());
 
             TextView usernameView = (TextView) item
                     .findViewById(R.id.account_item_username);
@@ -63,21 +59,20 @@ public class AccountsActivity extends Activity {
 
     public void showAdd(View view) {
         Intent intent = new Intent(this, AccountsAddActivity.class);
-        startActivityForResult(intent, 500);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        slideActivity(intent);
     }
 
     public void showDetail(View view) {
-        Intent intent = new Intent(this, AccountsDetailActivity.class);
         Account account = (Account) view.getTag();
+
+        Intent intent = new Intent(this, AccountsDetailActivity.class);
         intent.putExtra("accountKey", Settings.getAccountKey(account));
-        startActivityForResult(intent, 600);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        
+        slideActivity(intent);
     }
-  
-    
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    protected int getContentLayoutId() {
+        return R.layout.activity_accounts;
     }
 }

@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/item"
-    android:orientation="horizontal"
-    android:padding="5dip" >
+    style="@style/news_item" >
 
     <ImageView
         android:id="@+id/news_item_photo"
@@ -36,6 +32,14 @@
             android:textColor="#000"
             android:textIsSelectable="true"
             android:textSize="15sp" />
+        
+        <LinearLayout 
+            android:id="@+id/news_item_attachment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            />
+        
     </LinearLayout>
 
 </LinearLayout>

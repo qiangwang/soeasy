@@ -23,7 +23,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">#FFF</item>
     </style>
-    
+
     <style name="tabs_button">
         <item name="android:padding">2dip</item>
         <item name="android:gravity">center_horizontal</item>
@@ -44,7 +44,7 @@
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="settings_button">
+    <style name="settings_item">
         <item name="android:layout_marginBottom">5dip</item>
         <item name="android:paddingTop">8dip</item>
         <item name="android:paddingBottom">8dip</item>
@@ -58,6 +58,14 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:clickable">true</item>
         <item name="android:drawableRight">@drawable/settings_arrow</item>
+    </style>
+
+    <style name="news_item">
+        <item name="android:padding">5dip</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/item</item>
+        <item name="android:orientation">horizontal</item>
     </style>
 
 </resources>
